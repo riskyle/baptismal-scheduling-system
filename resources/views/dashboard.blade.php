@@ -19,11 +19,11 @@
         function scrollToBottom() {
             $(".chat-box").scrollTop($(".chat-box").prop("scrollHeight"));
         }
-        $(".chat-box").on("mouseenter", function() {
+        $(".chat-box").on("mouseenter", () => {
             $(this).addClass("active");
         });
 
-        $(".chat-box").on("mouseleave", function() {
+        $(".chat-box").on("mouseleave", () => {
             $(this).removeClass("active");
         });
 
@@ -40,6 +40,19 @@
                 hour12: true
             });
         }
+
+        function dateFormatter(value) {
+            const date = new Date(value);
+
+            const options = {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+            };
+
+            return new Intl.DateTimeFormat('en-US', options).format(date);
+        }
+
         $(".see-requirements").on("click", (e) => {
             e.preventDefault()
             var others = `
@@ -150,8 +163,7 @@
                                 </br>
                                 </br>
                                 Would you like to confirm this schedule?
-                                ${_s.sched_number == 2 ? "Second Sunday of the Month" : "Fourth Sunday of the Month"},
-                                ${timeFormatter(_s.sched_time)}
+                                On ${dateFormatter(_s.sched_date)} at ${timeFormatter(_s.sched_date)}
                                 </br>
                                 <span class="d-inline-flex">
                                     <button class="btn btn-outline-success me-2" id="sched-confirm-button" data-attr="${_s.id}">Confirm</button>
@@ -178,10 +190,11 @@
                         }
                     })
                     let data = getResponse.data.sched
-                    let time = timeFormatter(data.sched_time)
+                    let time = timeFormatter(data.sched_date)
+                    let date = dateFormatter(data.sched_date)
                     const postResponse = await axios.post("/store-msg", {
                         user_message: "Schedule Confirmed",
-                        bot_response: `Your Schedule has been booked! Slot time: ${time} ${data.sched_number == 2 ? "Second Sunday of the Month" : "Fourth Sunday of the Month"}`,
+                        bot_response: `Your Schedule has been booked! On ${date} at ${time}`,
                         sched_id: data.id,
                     })
                     console.log(postResponse)

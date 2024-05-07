@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('schedules', function (Blueprint $table) {
             $table->id();
-            $table->integer("sched_number");
-            $table->time("sched_time");
+            $table->dateTime("sched_date");
             $table->integer("sched_slot");
+            $table->boolean('is_delete')->default(0);
             $table->timestamps();
         });
     }

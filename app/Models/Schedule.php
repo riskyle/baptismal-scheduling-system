@@ -9,5 +9,14 @@ class Schedule extends Model
 {
     use HasFactory;
 
-    protected $fillable = ["sched_slot"];
+    protected $fillable = [
+        'sched_date',
+        'sched_slot',
+        'is_delete',
+    ];
+
+    public function scheduleUser()
+    {
+        return $this->hasMany(ScheduledUser::class);
+    }
 }
