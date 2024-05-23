@@ -91,12 +91,19 @@ class MessageController extends Controller
 
             $sched_date = Carbon::parse($s->sched_date)->format('F d, Y');
 
-            $sched_time = Carbon::parse($s->sched_time)->format(' d, Y');
+            $sched_time = Carbon::parse($s->sched_time)->format('h:i');
 
             $h = "
             <h1>Scheduled!</h1>
             <strong>Your scheduled has been booked!</strong>
             <p>Scheduled on {$sched_date} at {$sched_time}</p>
+
+            <h4>but first you need to comply this following.</h4>
+                <ol>
+                    <li>Pay first</li>
+                    <li>Attend Seminar</li>
+                    <li>Comply Requirements</li>
+                </ol>
             ";
 
             $userName = Auth::user()->name;

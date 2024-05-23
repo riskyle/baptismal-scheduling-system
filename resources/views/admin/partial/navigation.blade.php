@@ -39,7 +39,7 @@
                             <li class="nav-item dropdown">
                                 <a href="{{ route('admin.schedules') }}"
                                     class="nav-link nav-clients {{ request()->path() === 'admin/schedules' ? 'active' : '' }}">
-                                    <i class="nav-icon fas fa-users"></i>
+                                    <i class="nav-icon fas fa-file-invoice"></i>
                                     <p>
                                         List of Schedules
                                     </p>
@@ -49,7 +49,7 @@
                                 <a href="{{ route('admin.client-scheduled') }}"
                                     class="nav-link nav-billings
                                     {{ request()->path() === 'admin/scheduled-clients' ? 'active' : '' }}">
-                                    <i class="nav-icon fas fa-file-invoice"></i>
+                                    <i class="nav-icon fas fa-users"></i>
                                     <p>
                                         Client Scheduled
                                     </p>

@@ -3,6 +3,7 @@
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ScheduleController;
+use App\Models\ScheduledUser;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(["auth", "verified"])->group(function () {
@@ -29,6 +30,7 @@ Route::middleware(["auth", "verified"])->group(function () {
     Route::get("/get-sched", [ScheduleController::class, "getSchedule"]);
     Route::get("/get-msg", [MessageController::class, "getMessage"]);
     Route::post("/store-msg", [MessageController::class, "storeMessage"]);
+    Route::post("/check-list", [ScheduleController::class, "checkList"]);
 });
 
 Route::middleware('auth')->group(function () {

@@ -58,6 +58,13 @@
                                                     </form>
                                                     <div class="dropdown-divider"></div>
                                                 @endif
+
+                                                <button class="check-list btn btn-primary bg-white border-0" id='check-list'
+                                                    data-toggle="modal" data-target="#checkListModal"
+                                                    data-id='{{ $scheduledUser->id }}'><span
+                                                        class="fa fa-check text-success"></span>
+                                                    Check List</button>
+                                                <div class="dropdown-divider"></div>
                                                 <form
                                                     action="{{ route('admin.client-schedule.delete', $scheduledUser->id) }}"
                                                     method="post" id="delete">
@@ -78,6 +85,31 @@
             </div>
         </div>
     </section>
+    <!-- Modal -->
+    <div class="modal fade" id="checkListModal" tabindex="-1" role="dialog" aria-labelledby="checkListModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="checkListModalLabel">Check List</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="checkbox" name="Paid" id="paid" />
+                    <label for="paid">Paid</label><br />
+                    <input type="checkbox" name="Seminar" id="seminar" />
+                    <label for="seminar">Seminar</label><br />
+                    <input type="checkbox" name="Requirements" id="requirements" />
+                    <label for="seminar">Requirements</label><br />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
         $(document).ready(function() {
             $('.table').dataTable({
@@ -87,7 +119,84 @@
                 }],
                 order: [0, 'asc']
             });
+
             $('.dataTable td,.dataTable th').addClass('py-1 px-2 align-middle')
+
+            var id = ''
+            $('.check-list').on('click', async function() {
+                id = $(this).attr('data-id')
+
+                try {
+                    const response = await axios.post('/check-list', {
+                        purpose: 0,
+                        id: id,
+                    })
+                    console.log(response.data.scheduledUser)
+
+                    let schedUser = response.data.scheduledUser
+
+                    $("#paid,  #seminar, #requirements").prop("disabled", false);
+
+                    $("#paid, #seminar, #requirements").prop("checked", false);
+
+                    if (schedUser.paid_at != null && schedUser.is_seminar && schedUser
+                        .is_requirements) {
+                        $("#paid,  #seminar, #requirements").prop("disabled", true);
+                        $("#paid, #seminar, #requirements").prop("checked", true);
+                    } else if (schedUser.paid_at != null && schedUser.is_seminar) {
+                        $("#paid,  #seminar").prop("disabled", true);
+                        $("#paid, #seminar").prop("checked", true);
+                    } else if (schedUser.is_requirements && schedUser.is_seminar) {
+                        $("#requirements,  #seminar").prop("disabled", true);
+                        $("#requirements, #seminar").prop("checked", true);
+                    } else if (schedUser.paid_at != null && schedUser.is_requirements) {
+                        $("#paid,  #requirements").prop("disabled", true);
+                        $("#paid, #requirements").prop("checked", true);
+                    } else if (schedUser.paid_at != null) {
+                        $("#paid").prop("disabled", true);
+                        $("#paid").prop("checked", true);
+                    } else if (schedUser.is_seminar) {
+                        $("#seminar").prop("disabled", true);
+                        $("#seminar").prop("checked", true);
+                    } else if (schedUser.is_requirements) {
+                        $("#requirements").prop("disabled", true);
+                        $("#requirements").prop("checked", true);
+                    }
+
+                } catch (error) {
+                    console.log(error)
+                }
+
+            });
+
+            $('#paid').on('click', async function() {
+                $("#paid").prop("disabled", true);
+                $("#paid").prop("checked", true);
+                await throughCheckList(1, id)
+            })
+
+            $('#seminar').on('click', async function() {
+                $("#seminar").prop("disabled", true);
+                $("#seminar").prop("checked", true);
+                await throughCheckList(2, id)
+            })
+
+            $('#requirements').on('click', async function() {
+                $("#requirements").prop("disabled", true);
+                $("#requirements").prop("checked", true);
+                await throughCheckList(3, id)
+            })
         })
+
+        async function throughCheckList(purpose, id) {
+            try {
+                const response = await axios.post('/check-list', {
+                    purpose: purpose,
+                    id: id,
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        }
     </script>
 @endsection

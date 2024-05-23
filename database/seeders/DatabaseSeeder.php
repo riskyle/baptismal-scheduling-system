@@ -16,30 +16,16 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
-
-        Schedule::factory()->create([
-            "sched_number" => 2,
-            "sched_time" => "8:00",
-            "sched_slot" => 5,
+        User::factory()->create([
+            'name' => 'Admin',
+            'email' => 'admin@admin.com',
+            'role' => 2,
         ]);
-        Schedule::factory()->create([
-            "sched_number" => 2,
-            "sched_time" => "13:00",
-            "sched_slot" => 5,
-        ]);
-        Schedule::factory()->create([
-            "sched_number" => 4,
-            "sched_time" => "8:00",
-            "sched_slot" => 5,
-        ]);
-        Schedule::factory()->create([
-            "sched_number" => 4,
-            "sched_time" => "13:00",
-            "sched_slot" => 5,
+     
+        User::factory()->create([
+            'name' => 'Christian Kyle Autor',
+            'email' => 'cautor3@gmail.com',
+            'role' => 1,
         ]);
     }
 }
