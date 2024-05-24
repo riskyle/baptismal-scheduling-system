@@ -40,6 +40,12 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     <style type="text/css">
+        .dropdown-menu-scrollable {
+            max-height: 200px;
+            /* Adjust height as needed */
+            overflow-y: auto;
+        }
+
         /* Chart.js */
         @keyframes chartjs-render-animation {
             from {

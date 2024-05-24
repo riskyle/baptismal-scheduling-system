@@ -3,14 +3,32 @@
     <section class="content text-dark">
         <div class="container-fluid">
             <div class="card card-outline rounded-0 card-navy">
-                {{-- <div class="card-header">
-                    <h3 class="card-title">List of Schedules</h3>
-                    <div class="card-tools">
-                        <a href="{{ route('admin.schedule.create') }}" id="create_new" class="btn btn-flat btn-primary"><span
-                                class="fas fa-plus"></span>
-                            Create New</a>
+                <div class="card-header">
+                    <h3 class="card-title">List of Clients</h3>
+                    <div class="card-tools m-auto">
+                        <div class="dropdown me-5">
+                            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Filter Month
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-scrollable" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="{{ route('admin.client-scheduled') }}">All</a>
+                                <a class="dropdown-item" href="{{ route('admin.client-scheduled') }}?month=1">January</a>
+                                <a class="dropdown-item" href="{{ route('admin.client-scheduled') }}?month=2">February</a>
+                                <a class="dropdown-item" href="{{ route('admin.client-scheduled') }}?month=3">March</a>
+                                <a class="dropdown-item" href="{{ route('admin.client-scheduled') }}?month=4">April</a>
+                                <a class="dropdown-item" href="{{ route('admin.client-scheduled') }}?month=5">May</a>
+                                <a class="dropdown-item" href="{{ route('admin.client-scheduled') }}?month=6">June</a>
+                                <a class="dropdown-item" href="{{ route('admin.client-scheduled') }}?month=7">July</a>
+                                <a class="dropdown-item" href="{{ route('admin.client-scheduled') }}?month=8">August</a>
+                                <a class="dropdown-item" href="{{ route('admin.client-scheduled') }}?month=9">September</a>
+                                <a class="dropdown-item" href="{{ route('admin.client-scheduled') }}?month=10">October</a>
+                                <a class="dropdown-item" href="{{ route('admin.client-scheduled') }}?month=11">November</a>
+                                <a class="dropdown-item" href="{{ route('admin.client-scheduled') }}?month=12">December</a>
+                            </div>
+                        </div>
                     </div>
-                </div> --}}
+                </div>
                 <div class="card-body">
                     <div class="container-fluid">
                         <table class="table table-hover table-striped table-bordered" id="list">
@@ -36,7 +54,8 @@
                                         <td> {{ $scheduledUser->user->name }}</td>
                                         <td> {{ Carbon\Carbon::parse($scheduledUser->schedule->sched_date)->format('F d, Y @h:i a') }}
                                         </td>
-                                        <td class='is_paid{{$scheduledUser->id}}'> {{ $scheduledUser->paid_at != null ? $scheduledUser->paid_at : 'Unpaid' }}
+                                        <td class='is_paid{{ $scheduledUser->id }}'>
+                                            {{ $scheduledUser->paid_at != null ? $scheduledUser->paid_at : 'Unpaid' }}
                                         </td>
                                         <td align="center">
                                             <button type="button"
@@ -105,7 +124,8 @@
                     <label for="seminar">Requirements</label><br />
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="confirmed-button" style="display: none" data-dismiss="modal">Confirmed Booked</button>
+                    <button type="button" class="btn btn-primary" id="confirmed-button" style="display: none"
+                        data-dismiss="modal">Confirmed Booked</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -113,10 +133,10 @@
     </div>
     <script>
         $(document).ready(function() {
-            $('.table').dataTable({
+            var clientScheduled = $('.table').dataTable({
                 columnDefs: [{
                     orderable: false,
-                    targets: [3]
+                    targets: [4]
                 }],
                 order: [0, 'asc']
             });
@@ -132,8 +152,6 @@
                         purpose: 0,
                         id: id,
                     })
-                    console.log(response)
-                    console.log(response.data.scheduledUser)
 
                     let schedUser = response.data.scheduledUser
 
@@ -143,7 +161,8 @@
 
                     $('#confirmed-button').hide()
 
-                    if (schedUser.paid_at != null && schedUser.is_seminar && schedUser.is_requirements) {
+                    if (schedUser.paid_at != null && schedUser.is_seminar && schedUser
+                        .is_requirements) {
                         $('#confirmed-button').show()
                         $("#paid,  #seminar, #requirements").prop("disabled", true);
                         $("#paid, #seminar, #requirements").prop("checked", true);
@@ -175,8 +194,12 @@
 
             $('#paid').on('click', async function() {
                 const currentDate = new Date();
-                const formattedDate = currentDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-                $('.is_paid'+ id).html(formattedDate)
+                const formattedDate = currentDate.toLocaleDateString('en-US', {
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+                $('.is_paid' + id).html(formattedDate)
                 $('.paid_data').hide();
                 $('.paid').hide();
                 $("#paid").prop("disabled", true);
@@ -195,7 +218,7 @@
                 $("#requirements").prop("checked", true);
                 await throughCheckList(3, id)
             })
-            
+
             $('#confirmed-button').on('click', async function() {
                 $("#requirements").prop("disabled", true);
                 $("#requirements").prop("checked", true);

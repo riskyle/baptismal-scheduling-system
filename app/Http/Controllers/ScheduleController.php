@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Response;
 
 class ScheduleController extends Controller
 {
+    private int $month = 0;
     public function index(Schedule $schedule)
     {
 
@@ -61,10 +62,16 @@ class ScheduleController extends Controller
         return redirect(route('admin.schedules'));
     }
 
-    public function clientScheduled(ScheduledUser $scheduledUser)
+    public function clientScheduled(ScheduledUser $scheduledUser, Request $request)
     {
-
         $scheduledUsers = $scheduledUser->all();
+
+        if ($request->month) {
+            $this->month = $request->month;
+            $scheduledUsers = $get = ScheduledUser::whereHas('schedule', function ($query) {
+                $query->whereMonth('sched_date', $this->month);
+            })->get();
+        }
 
         return view('admin.client-scheduled', compact('scheduledUsers'));
     }
@@ -187,23 +194,23 @@ class ScheduleController extends Controller
             $s = "Completed Requirements";
 
             Mail::to($email)->send(new SendUserEmail(h: $h, s: $s));
-        } else if($request->purpose == 4){
-          
+        } else if ($request->purpose == 4) {
+
             $paid = $scheduledUser->first()->paid_at;
-            
+
             $seminar = $scheduledUser->first()->is_seminar;
 
             $requirements = $scheduledUser->first()->is_requirements;
-            
+
             $sched_date = Carbon::parse($scheduledUser->first()->schedule->sched_date)->format('F d, Y');
 
             $sched_time = Carbon::parse($scheduledUser->first()->schedule->sched_date)->format('h:i a');
-            
-            if($paid != null && $seminar == 1 && $requirements == 1){
+
+            if ($paid != null && $seminar == 1 && $requirements == 1) {
                 $h = "<h1>Scheduled Booked!</h1>
                 <p>Scheduled has been booked on {$sched_date} at {$sched_time}</p>
                 ";
-                
+
                 $s = "Scheduled has been finally booked";
                 Mail::to($email)->send(new SendUserEmail(h: $h, s: $s));
             }
