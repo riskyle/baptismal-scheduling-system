@@ -205,6 +205,8 @@ class ScheduleController extends Controller
 
             $requirements = $scheduledUser->first()->is_requirements;
 
+            $userId = $scheduledUser->first()->user->id;
+
             $sched_date = Carbon::parse($scheduledUser->first()->schedule->sched_date)->format('F d, Y');
 
             $sched_time = Carbon::parse($scheduledUser->first()->schedule->sched_date)->format('h:i a');
@@ -218,8 +220,8 @@ class ScheduleController extends Controller
 
                 $message->create(
                     [
-                        "user_id" => Auth::user()->id,
-                        "incoming_msg_id" => Auth::user()->id,
+                        "user_id" => $userId,
+                        "incoming_msg_id" => $userId,
                         "outgoing_msg_id" => 1010,
                         "msg" => "Your Schedule on {$sched_date} at {$sched_time} has been booked confirmed.",
                     ]
