@@ -13,18 +13,26 @@
                             </button>
                             <div class="dropdown-menu dropdown-menu-scrollable" aria-labelledby="dropdownMenuButton">
                                 <a class="dropdown-item" href="{{ route('admin.client-scheduled') }}">All</a>
-                                <a class="dropdown-item" href="{{ route('admin.client-scheduled') }}?month=1">January</a>
-                                <a class="dropdown-item" href="{{ route('admin.client-scheduled') }}?month=2">February</a>
-                                <a class="dropdown-item" href="{{ route('admin.client-scheduled') }}?month=3">March</a>
-                                <a class="dropdown-item" href="{{ route('admin.client-scheduled') }}?month=4">April</a>
-                                <a class="dropdown-item" href="{{ route('admin.client-scheduled') }}?month=5">May</a>
-                                <a class="dropdown-item" href="{{ route('admin.client-scheduled') }}?month=6">June</a>
-                                <a class="dropdown-item" href="{{ route('admin.client-scheduled') }}?month=7">July</a>
-                                <a class="dropdown-item" href="{{ route('admin.client-scheduled') }}?month=8">August</a>
-                                <a class="dropdown-item" href="{{ route('admin.client-scheduled') }}?month=9">September</a>
-                                <a class="dropdown-item" href="{{ route('admin.client-scheduled') }}?month=10">October</a>
-                                <a class="dropdown-item" href="{{ route('admin.client-scheduled') }}?month=11">November</a>
-                                <a class="dropdown-item" href="{{ route('admin.client-scheduled') }}?month=12">December</a>
+                                @php
+                                    $months = [
+                                        '1' => 'January',
+                                        '2' => 'February',
+                                        '3' => 'March',
+                                        '4' => 'April',
+                                        '5' => 'May',
+                                        '6' => 'June',
+                                        '7' => 'July',
+                                        '8' => 'August',
+                                        '9' => 'September',
+                                        '10' => 'October',
+                                        '11' => 'November',
+                                        '12' => 'December',
+                                    ];
+                                @endphp
+                                @foreach ($months as $key => $month)
+                                    <a class="dropdown-item"
+                                        href="{{ route('admin.client-scheduled') }}?month={{ $key }}">{{ $month }}</a>
+                                @endforeach
                             </div>
                         </div>
                     </div>
@@ -125,7 +133,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" id="confirmed-button" style="display: none"
-                        data-dismiss="modal">Confirmed Booked</button>
+                        data-dismiss="modal">Confirm Booked</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -161,9 +169,14 @@
 
                     $('#confirmed-button').hide()
 
-                    if (schedUser.paid_at != null && schedUser.is_seminar && schedUser
-                        .is_requirements) {
+                    if (schedUser.paid_at != null &&
+                        schedUser.is_seminar &&
+                        schedUser.is_requirements
+                    ) {
                         $('#confirmed-button').show()
+                        schedUser.is_confirmed ?
+                            $('#confirmed-button').html('Confirmed Booked').prop('disabled', true) :
+                            null
                         $("#paid,  #seminar, #requirements").prop("disabled", true);
                         $("#paid, #seminar, #requirements").prop("checked", true);
                     } else if (schedUser.paid_at != null && schedUser.is_seminar) {
@@ -205,26 +218,43 @@
                 $("#paid").prop("disabled", true);
                 $("#paid").prop("checked", true);
                 await throughCheckList(1, id)
+                await showConfirmedButton(id)
             })
 
             $('#seminar').on('click', async function() {
                 $("#seminar").prop("disabled", true);
                 $("#seminar").prop("checked", true);
                 await throughCheckList(2, id)
+                await showConfirmedButton(id)
             })
 
             $('#requirements').on('click', async function() {
                 $("#requirements").prop("disabled", true);
                 $("#requirements").prop("checked", true);
                 await throughCheckList(3, id)
+                await showConfirmedButton(id)
             })
 
             $('#confirmed-button').on('click', async function() {
+                $('#confirmed-button').html('Confirmed Booked')
+                $('#confirmed-button').prop('disabled', true)
                 $("#requirements").prop("disabled", true);
                 $("#requirements").prop("checked", true);
                 await throughCheckList(4, id)
             })
         })
+
+        async function showConfirmedButton(id) {
+            let sU, isPaid, isSeminar, isRequirements
+            const isConfirmed = await throughCheckList(0, id)
+            sU = isConfirmed.data.scheduledUser;
+            isPaid = sU.paid_at
+            isSeminar = sU.is_seminar
+            isRequirements = sU.is_requirements
+            if (isPaid && isSeminar == 1 && isRequirements == 1) {
+                $('#confirmed-button').show()
+            }
+        }
 
         async function throughCheckList(purpose, id) {
             try {
@@ -232,6 +262,7 @@
                     purpose: purpose,
                     id: id,
                 })
+                return response;
             } catch (error) {
                 console.log(error)
             }

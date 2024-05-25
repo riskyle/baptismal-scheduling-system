@@ -19,6 +19,7 @@ return new class extends Migration
             $table->dateTime('paid_at')->nullable();
             $table->boolean('is_seminar')->default(0);
             $table->boolean('is_requirements')->default(0);
+            $table->boolean('is_confirmed')->default(0);
             $table->timestamps();
         });
     }

@@ -91,7 +91,7 @@ class MessageController extends Controller
 
             $sched_date = Carbon::parse($s->sched_date)->format('F d, Y');
 
-            $sched_time = Carbon::parse($s->sched_time)->format('h:i');
+            $sched_time = Carbon::parse($s->sched_date)->format('h:i');
 
             $h = "
             <h1>Scheduled!</h1>

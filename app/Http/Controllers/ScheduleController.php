@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreMessageRequest;
 use App\Mail\SendUserEmail;
+use App\Models\Message;
 use App\Models\Schedule;
 use App\Models\ScheduledUser;
 use Carbon\Carbon;
@@ -153,7 +155,7 @@ class ScheduleController extends Controller
             ->delete();
     }
 
-    public function checkList(ScheduledUser $scheduledUser, Request $request)
+    public function checkList(ScheduledUser $scheduledUser, Request $request, Message $message)
     {
         $scheduledUser = $scheduledUser->where('id', $request->id);
 
@@ -164,6 +166,7 @@ class ScheduleController extends Controller
         if ($request->purpose == 0) {
             $scheduledUser = $scheduledUser->first();
         } else if ($request->purpose == 1) {
+
             $carbon = new Carbon;
 
             $scheduledUser->update(['paid_at' => $carbon->now()]);
@@ -212,6 +215,18 @@ class ScheduleController extends Controller
                 ";
 
                 $s = "Scheduled has been finally booked";
+
+                $message->create(
+                    [
+                        "user_id" => Auth::user()->id,
+                        "incoming_msg_id" => Auth::user()->id,
+                        "outgoing_msg_id" => 1010,
+                        "msg" => "Your Schedule on {$sched_date} at {$sched_time} has been booked confirmed.",
+                    ]
+                );
+
+                $scheduledUser->update(['is_confirmed' => 1]);
+
                 Mail::to($email)->send(new SendUserEmail(h: $h, s: $s));
             }
         }
