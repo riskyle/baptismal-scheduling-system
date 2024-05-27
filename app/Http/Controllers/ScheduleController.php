@@ -266,49 +266,49 @@ class ScheduleController extends Controller
                 "user_id" => $userId,
                 "incoming_msg_id" => $userId,
                 "outgoing_msg_id" => 1010,
-                "msg" => "Your booking $sched_date on $sched_time has been canceled due to a lack of payment. Please attend the seminar and comply with the requirements.",
+                "msg" => "Your booking on $sched_date at $sched_time has been canceled due to a lack of payment. Please attend the seminar and comply with the requirements.",
             ];
         } else if ($paid == null && $seminar == 0) { //if not paid and seminar
             $msg = [
                 "user_id" => $userId,
                 "incoming_msg_id" => $userId,
                 "outgoing_msg_id" => 1010,
-                "msg" => "Your booking $sched_date on $sched_time has been canceled due to a lack of payment. Please attend the seminar",
+                "msg" => "Your booking on $sched_date at $sched_time has been canceled due to a lack of payment. Please attend the seminar",
             ];
         } else if ($paid == null && $requirements == 0) { //if not paid and requirements
             $msg = [
                 "user_id" => $userId,
                 "incoming_msg_id" => $userId,
                 "outgoing_msg_id" => 1010,
-                "msg" => "Your booking $sched_date on $sched_time has been canceled due to a lack of payment. Please comply with the requirements.",
+                "msg" => "Your booking on $sched_date at $sched_time has been canceled due to a lack of payment. Please comply with the requirements.",
             ];
         } else if ($seminar == 0 && $requirements == 0) { //if not seminar and requirements
             $msg = [
                 "user_id" => $userId,
                 "incoming_msg_id" => $userId,
                 "outgoing_msg_id" => 1010,
-                "msg" => "Your booking $sched_date on $sched_time has been canceled due to a lack of attend the seminar and comply with the requirements.",
+                "msg" => "Your booking on $sched_date at $sched_time has been canceled due to a lack of attend the seminar and comply with the requirements.",
             ];
         } else if ($paid == null) {   //if not paid
             $msg = [
                 "user_id" => $userId,
                 "incoming_msg_id" => $userId,
                 "outgoing_msg_id" => 1010,
-                "msg" => "Your booking $sched_date on $sched_time has been canceled due to a lack of payment.",
+                "msg" => "Your booking on $sched_date at $sched_time has been canceled due to a lack of payment.",
             ];
         } else if ($seminar == 0) { //if not seminar
             $msg = [
                 "user_id" => $userId,
                 "incoming_msg_id" => $userId,
                 "outgoing_msg_id" => 1010,
-                "msg" => "Your booking $sched_date on $sched_time has been canceled due to a lack of attend the seminar.",
+                "msg" => "Your booking on $sched_date at $sched_time has been canceled due to a lack of attend the seminar.",
             ];
         } else if ($requirements == 0) { //if not requirements
             $msg = [
                 "user_id" => $userId,
                 "incoming_msg_id" => $userId,
                 "outgoing_msg_id" => 1010,
-                "msg" => "Your booking $sched_date on $sched_time has been canceled due to a lack of comply with the requirements.",
+                "msg" => "Your booking on $sched_date at $sched_time has been canceled due to a lack of comply with the requirements.",
             ];
         }
 
