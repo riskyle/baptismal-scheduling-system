@@ -139,7 +139,7 @@
                     })
                     console.log(response)
                     let status = response.data.status
-                    if(status == true){
+                    if (status == true) {
                         var confirmation = `
                             <div class="chat incoming">
                                 <img src="http://127.0.0.1:8000/st_isidore.jpg" width="60" height="60" alt="" />
@@ -149,7 +149,7 @@
                                     </p>
                                 </div>  
                             </div>`
-                    } else{
+                    } else {
                         var _s = response.data.sched
                         if (_s.sched_slot == 0) {
                             var confirmation = `
@@ -199,13 +199,13 @@
                         }
                     })
                     /*
-                    but first you need to comply this following to succesfuly booked.</h4>
-                <ol>
-                    <li>Pay first</li>
-                    <li>Attend Seminar</li>
-                    <li>Comply Requirements</li>
-                </ol>
-                    */
+                        but first you need to comply this following to succesfuly booked.</h4>
+                    <ol>
+                        <li>Pay first</li>
+                        <li>Attend Seminar</li>
+                        <li>Comply Requirements</li>
+                    </ol>
+                        */
                     let data = getResponse.data.sched
                     let time = timeFormatter(data.sched_date)
                     let date = dateFormatter(data.sched_date)

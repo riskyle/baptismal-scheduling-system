@@ -63,7 +63,7 @@
                                         <td> {{ Carbon\Carbon::parse($scheduledUser->schedule->sched_date)->format('F d, Y @h:i a') }}
                                         </td>
                                         <td class='is_paid{{ $scheduledUser->id }}'>
-                                            {{ $scheduledUser->paid_at != null ? $scheduledUser->paid_at : ($scheduledUser->is_cancel == 0 ? 'Unpaid' : 'Cancelled') }}
+                                            {{ $scheduledUser->paid_at != null && $scheduledUser->is_cancel == 0 ? $scheduledUser->paid_at : ($scheduledUser->is_cancel == 0 ? 'Unpaid' : 'Cancelled') }}
                                         </td>
                                         <td align="center">
                                             <button type="button"
@@ -85,38 +85,27 @@
                                                     </form>
                                                     <div class="dropdown-divider paid"></div>
                                                 @endif
-                                                
-                                                 @if ($scheduledUser->is_cancel == 0)
+
+                                                @if ($scheduledUser->is_cancel == 0)
                                                     <!-- cancel button -->
-                                                    <form
-                                                        action="{{ route('admin.schedule.cancel', $scheduledUser->id) }}"
+                                                    <form action="{{ route('admin.schedule.cancel', $scheduledUser->id) }}"
                                                         method="post">
                                                         @csrf
                                                         @method('PATCH')
-                                                         <button class="dropdown-item cancel_data" type="submit">
+                                                        <button class="dropdown-item cancel_data" type="submit">
                                                             <span><span class="fa fa-cancel text-danger">&#xf00d;</span>
-                                                            Cancel
+                                                                Cancel
                                                         </button>
                                                     </form>
                                                     <div class="dropdown-divider"></div>
 
-                                                    <button class="check-list btn btn-primary bg-white border-0" id='check-list'
-                                                        data-toggle="modal" data-target="#checkListModal"
+                                                    <button class="check-list btn btn-primary bg-white border-0"
+                                                        id='check-list' data-toggle="modal" data-target="#checkListModal"
                                                         data-id='{{ $scheduledUser->id }}'><span
                                                             class="fa fa-check text-success"></span>
                                                         Check List</button>
                                                     <!-- <div class="dropdown-divider"></div> -->
                                                 @endif
-                                                
-                                                <!-- <form
-                                                    action="{{ route('admin.client-schedule.delete', $scheduledUser->id) }}"
-                                                    method="post" id="delete">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button class="dropdown-item delete_data" type="submit"><span
-                                                            class="fa fa-trash text-danger"></span>
-                                                        Delete</button>
-                                                </form> -->
                                             </div>
                                         </td>
                                     </tr>

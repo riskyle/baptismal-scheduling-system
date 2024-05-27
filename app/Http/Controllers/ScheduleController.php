@@ -119,10 +119,10 @@ class ScheduleController extends Controller
     {
         // $schedule =  $schedule->find(request("sched_id"));
         $sU =  $scheduledUser
-                ->where('user_id', auth()->user()->id)
-                ->where('is_cancel', 0)->count();
-        if($sU){
-            return Response::json(["status" => true]);  
+            ->where('user_id', auth()->user()->id)
+            ->where('is_cancel', 0)->count();
+        if ($sU) {
+            return Response::json(["status" => true]);
         }
         return Response::json(["sched" => $schedule->find(request("sched_id"))]);
     }
@@ -243,8 +243,86 @@ class ScheduleController extends Controller
         return Response::json(['scheduledUser' => $scheduledUser]);
     }
 
-    public function cancel($id, ScheduledUser $scheduledUser){
-        $scheduledUser->where('id', $id)->update(['is_cancel' => 1]);
+    public function cancel($id, ScheduledUser $scheduledUser, Schedule $schedule, Message $message)
+    {
+        $sU = $scheduledUser->where('id', $id)->first();
+
+        $sched_date = Carbon::parse($sU->schedule->sched_date)->format('F d, Y');
+
+        $sched_time = Carbon::parse($sU->schedule->sched_date)->format('h:i a');
+
+        $paid = $sU->paid_at;
+
+        $seminar = $sU->is_seminar;
+
+        $requirements = $sU->is_requirements;
+
+        $userId = $sU->user_id;
+
+        $msg = [];
+
+        if ($paid == null && $seminar == 0 && $requirements == 0) { //if not paid, seminar and requirements
+            $msg = [
+                "user_id" => $userId,
+                "incoming_msg_id" => $userId,
+                "outgoing_msg_id" => 1010,
+                "msg" => "Your booking $sched_date on $sched_time has been canceled due to a lack of payment. Please attend the seminar and comply with the requirements.",
+            ];
+        } else if ($paid == null && $seminar == 0) { //if not paid and seminar
+            $msg = [
+                "user_id" => $userId,
+                "incoming_msg_id" => $userId,
+                "outgoing_msg_id" => 1010,
+                "msg" => "Your booking $sched_date on $sched_time has been canceled due to a lack of payment. Please attend the seminar",
+            ];
+        } else if ($paid == null && $requirements == 0) { //if not paid and requirements
+            $msg = [
+                "user_id" => $userId,
+                "incoming_msg_id" => $userId,
+                "outgoing_msg_id" => 1010,
+                "msg" => "Your booking $sched_date on $sched_time has been canceled due to a lack of payment. Please comply with the requirements.",
+            ];
+        } else if ($seminar == 0 && $requirements == 0) { //if not seminar and requirements
+            $msg = [
+                "user_id" => $userId,
+                "incoming_msg_id" => $userId,
+                "outgoing_msg_id" => 1010,
+                "msg" => "Your booking $sched_date on $sched_time has been canceled due to a lack of attend the seminar and comply with the requirements.",
+            ];
+        } else if ($paid == null) {   //if not paid
+            $msg = [
+                "user_id" => $userId,
+                "incoming_msg_id" => $userId,
+                "outgoing_msg_id" => 1010,
+                "msg" => "Your booking $sched_date on $sched_time has been canceled due to a lack of payment.",
+            ];
+        } else if ($seminar == 0) { //if not seminar
+            $msg = [
+                "user_id" => $userId,
+                "incoming_msg_id" => $userId,
+                "outgoing_msg_id" => 1010,
+                "msg" => "Your booking $sched_date on $sched_time has been canceled due to a lack of attend the seminar.",
+            ];
+        } else if ($requirements == 0) { //if not requirements
+            $msg = [
+                "user_id" => $userId,
+                "incoming_msg_id" => $userId,
+                "outgoing_msg_id" => 1010,
+                "msg" => "Your booking $sched_date on $sched_time has been canceled due to a lack of comply with the requirements.",
+            ];
+        }
+
+        $message->create($msg);
+
+        $s = $schedule->where('id', $sU->schedule_id)->first();
+
+        $incrementSlot = $s->sched_slot + 1;
+
+        $s->update(['sched_slot' => $incrementSlot]);
+
+        $cancel = 1;
+        $scheduledUser->where('id', $id)->update(['is_cancel' => $cancel]);
+
         return redirect(route('admin.client-scheduled'));
     }
 }
