@@ -238,6 +238,76 @@ class ScheduleController extends Controller
 
                 Mail::to($email)->send(new SendUserEmail(h: $h, s: $s));
             }
+        } else if ($request->purpose == 5) {
+
+            $sU = $scheduledUser->where('id', $request->id)->first();
+
+            $sched_date = Carbon::parse($sU->schedule->sched_date)->format('F d, Y');
+
+            $sched_time = Carbon::parse($sU->schedule->sched_date)->format('h:i a');
+
+            $paid = $sU->paid_at;
+
+            $seminar = $sU->is_seminar;
+
+            $requirements = $sU->is_requirements;
+
+            $userId = $sU->user_id;
+
+            $msg = [];
+
+            if ($paid == null && $seminar == 0 && $requirements == 0) { //if not paid, seminar and requirements
+                $msg = [
+                    "user_id" => $userId,
+                    "incoming_msg_id" => $userId,
+                    "outgoing_msg_id" => 1010,
+                    "msg" => "Your booking on $sched_date at $sched_time is lack of payment, attending seminar and requirements. Please comply these within 24 hours or else your booking will be cancelled. ",
+                ];
+            } else if ($paid == null && $seminar == 0) { //if not paid and seminar
+                $msg = [
+                    "user_id" => $userId,
+                    "incoming_msg_id" => $userId,
+                    "outgoing_msg_id" => 1010,
+                    "msg" => "Your booking on $sched_date at $sched_time is lack of payment and attending seminar. Please comply it within 24 hours or else your booking will be cancelled.",
+                ];
+            } else if ($paid == null && $requirements == 0) { //if not paid and requirements
+                $msg = [
+                    "user_id" => $userId,
+                    "incoming_msg_id" => $userId,
+                    "outgoing_msg_id" => 1010,
+                    "msg" => "Your booking on $sched_date at $sched_time is lack of payment and requiremnts. Please comply this lacking within 24 hours or else your booking will be cancelled.",
+                ];
+            } else if ($seminar == 0 && $requirements == 0) { //if not seminar and requirements
+                $msg = [
+                    "user_id" => $userId,
+                    "incoming_msg_id" => $userId,
+                    "outgoing_msg_id" => 1010,
+                    "msg" => "Your booking on $sched_date at $sched_time is lack of attending the seminar and requirements. Please comply this lacking within 24 hours or else your booking will be cancelled.",
+                ];
+            } else if ($paid == null) {   //if not paid
+                $msg = [
+                    "user_id" => $userId,
+                    "incoming_msg_id" => $userId,
+                    "outgoing_msg_id" => 1010,
+                    "msg" => "Your booking on $sched_date at $sched_time is lack of payment. Please comply this lacking within 24 hours or else your booking will be cancelled. ",
+                ];
+            } else if ($seminar == 0) { //if not seminar
+                $msg = [
+                    "user_id" => $userId,
+                    "incoming_msg_id" => $userId,
+                    "outgoing_msg_id" => 1010,
+                    "msg" => "Your booking on $sched_date at $sched_time is lack of attending the seminar.  Please comply this lacking within 24 hours or else your booking will be cancelled.",
+                ];
+            } else if ($requirements == 0) { //if not requirements
+                $msg = [
+                    "user_id" => $userId,
+                    "incoming_msg_id" => $userId,
+                    "outgoing_msg_id" => 1010,
+                    "msg" => "Your booking on $sched_date at $sched_time is lack of requirements. Please comply this within 24 hours or else your booking will be cancelled. ",
+                ];
+            }
+
+            $message->create($msg);
         }
 
         return Response::json(['scheduledUser' => $scheduledUser]);
@@ -266,49 +336,49 @@ class ScheduleController extends Controller
                 "user_id" => $userId,
                 "incoming_msg_id" => $userId,
                 "outgoing_msg_id" => 1010,
-                "msg" => "Your booking on $sched_date at $sched_time has been canceled due to a lack of payment. Please attend the seminar and comply with the requirements.",
+                "msg" => "Your booking on $sched_date at $sched_time has been canceled due to a lack of payment, seminar, and requirements. Please attend the seminar and comply with the payment and requirements or else your booking will be cancelled.",
             ];
         } else if ($paid == null && $seminar == 0) { //if not paid and seminar
             $msg = [
                 "user_id" => $userId,
                 "incoming_msg_id" => $userId,
                 "outgoing_msg_id" => 1010,
-                "msg" => "Your booking on $sched_date at $sched_time has been canceled due to a lack of payment. Please attend the seminar",
+                "msg" => "Your booking on $sched_date at $sched_time has been canceled due to a lack of payment and seminar. Please comply the payment and attend the seminar or else your booking will be cancelled.",
             ];
         } else if ($paid == null && $requirements == 0) { //if not paid and requirements
             $msg = [
                 "user_id" => $userId,
                 "incoming_msg_id" => $userId,
                 "outgoing_msg_id" => 1010,
-                "msg" => "Your booking on $sched_date at $sched_time has been canceled due to a lack of payment. Please comply with the requirements.",
+                "msg" => "Your booking on $sched_date at $sched_time has been canceled due to a lack of payment and requirements. Please comply with the payment and requirements or else your booking will be cancelled.",
             ];
         } else if ($seminar == 0 && $requirements == 0) { //if not seminar and requirements
             $msg = [
                 "user_id" => $userId,
                 "incoming_msg_id" => $userId,
                 "outgoing_msg_id" => 1010,
-                "msg" => "Your booking on $sched_date at $sched_time has been canceled due to a lack of attend the seminar and comply with the requirements.",
+                "msg" => "Your booking on $sched_date at $sched_time has been canceled due to a lack of attend the seminar and the requirements. Please comply this within 24 hours or else your booking will be cancelled.",
             ];
         } else if ($paid == null) {   //if not paid
             $msg = [
                 "user_id" => $userId,
                 "incoming_msg_id" => $userId,
                 "outgoing_msg_id" => 1010,
-                "msg" => "Your booking on $sched_date at $sched_time has been canceled due to a lack of payment.",
+                "msg" => "Your booking on $sched_date at $sched_time has been canceled due to a lack of payment. Please comply this within 24 hours or else your booking will be cancelled.",
             ];
         } else if ($seminar == 0) { //if not seminar
             $msg = [
                 "user_id" => $userId,
                 "incoming_msg_id" => $userId,
                 "outgoing_msg_id" => 1010,
-                "msg" => "Your booking on $sched_date at $sched_time has been canceled due to a lack of attend the seminar.",
+                "msg" => "Your booking on $sched_date at $sched_time has been canceled due to a lack of attend the seminar. Please comply this within 24 hours or else your booking will be cancelled.",
             ];
         } else if ($requirements == 0) { //if not requirements
             $msg = [
                 "user_id" => $userId,
                 "incoming_msg_id" => $userId,
                 "outgoing_msg_id" => 1010,
-                "msg" => "Your booking on $sched_date at $sched_time has been canceled due to a lack of comply with the requirements.",
+                "msg" => "Your booking on $sched_date at $sched_time has been canceled due to a lack of comply with the requirements. Please comply this within 24 hours or else your booking will be cancelled.",
             ];
         }
 

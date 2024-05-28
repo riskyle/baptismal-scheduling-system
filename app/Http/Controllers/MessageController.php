@@ -156,6 +156,14 @@ class MessageController extends Controller
                     "msg" => "We sent you a message in your gmail account as proof of your booking for baptoschedule. Please check your notification. Thank you.",
                 ]
             );
+            $message->create(
+                [
+                    "user_id" => Auth::user()->id,
+                    "incoming_msg_id" => Auth::user()->id,
+                    "outgoing_msg_id" => 1010,
+                    "msg" => "Please comply the following <br/> 1. Payment <br/> 2. Seminar <br/> 3. Requirements <br/> or else you will be cancelled after 24 hours",
+                ]
+            );
         }
 
         return Response::json(["res" => $request->user_message . " " . $request->bot_response]);

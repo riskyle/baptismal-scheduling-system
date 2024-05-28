@@ -87,17 +87,19 @@
                                                 @endif
 
                                                 @if ($scheduledUser->is_cancel == 0)
-                                                    <!-- cancel button -->
-                                                    <form action="{{ route('admin.schedule.cancel', $scheduledUser->id) }}"
-                                                        method="post">
-                                                        @csrf
-                                                        @method('PATCH')
-                                                        <button class="dropdown-item cancel_data" type="submit">
-                                                            <span><span class="fa fa-cancel text-danger">&#xf00d;</span>
-                                                                Cancel
-                                                        </button>
-                                                    </form>
-                                                    <div class="dropdown-divider"></div>
+                                                    @if ($scheduledUser->paid_at == null || $scheduledUser->is_seminar == 0 || $scheduledUser->is_requirements == 0)
+                                                        <form
+                                                            action="{{ route('admin.schedule.cancel', $scheduledUser->id) }}"
+                                                            method="post">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <button class="dropdown-item cancel_data" type="submit">
+                                                                <span><span class="fa fa-cancel text-danger">&#xf00d;</span>
+                                                                    Cancel
+                                                            </button>
+                                                        </form>
+                                                        <div class="dropdown-divider"></div>
+                                                    @endif
 
                                                     <button class="check-list btn btn-primary bg-white border-0"
                                                         id='check-list' data-toggle="modal" data-target="#checkListModal"
@@ -139,7 +141,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" id="confirmed-button" style="display: none"
                         data-dismiss="modal">Confirm Booked</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" id='close' data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -247,7 +249,12 @@
                 $("#requirements").prop("checked", true);
                 await throughCheckList(4, id)
             })
+
+            $('#close').on('click', async function() {
+                await throughCheckList(5, id)
+            })
         })
+
 
         async function showConfirmedButton(id) {
             let sU, isPaid, isSeminar, isRequirements
@@ -267,6 +274,7 @@
                     purpose: purpose,
                     id: id,
                 })
+                console.log(response)
                 return response;
             } catch (error) {
                 console.log(error)
